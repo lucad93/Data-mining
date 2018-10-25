@@ -3,12 +3,17 @@ close all
 clc
 
 %% Regression in multi-dimension problems
-% This script is general and can be used in all problems
+% This script is general and can be used in all problems. We'll only talk
+% about mono-variable systems, because of the possibility of drawing
+% graphs.
 
 m = 1000;
-n = 100;                                 % samples
+n = 100;                                 % Number of samples. As I increase 
+                                         % it, as the model follows reality
 d = 1;                                   % dimension of the problem
-sigma = .05;
+sigma = .05;                             % Variance of the noise.
+% If variance value is high, then we need more samples, taking average
+% value.
 
 XT = linspace(-2*pi, 2*pi, m)';
 YT = sinc(XT);
@@ -19,7 +24,8 @@ Y = sinc(X) + sigma * randn(n,1);
 figure, box on, hold on, grid on
 plot(XT,YT,'g');
 plot(X,Y,'ob');
-
+% Note: for cycles and if statements are deprecated in Matlab environment,
+% because they slow the code.
 %% Kernel method
 % min_w || X w - y ||^2 + lambda ||w||^2
 % X = [phi(x_1)',...,phi(x_n)']
@@ -38,14 +44,15 @@ Q = zeros(n,n);
 nl = round(.7*n);                                   % learning set (70% of data)
 nv = n - nl;                                        % validation set (the remaining)
 % I can compute the pair-wise distances here
-PD = pdist2(X,X);                                    % optimisation step
+PD = pdist2(X,X);                                   % optimisation step
 err = zeros(30*30,1);                               % instead of using a matrix we use a vector to have only a single index
 for k = 1:30                                        % 30 is the magical number
     i = randperm(n);
-    il = sort(i(1:nl));
+    il = sort(i(1:nl));                             % sort function to get the result less disordered
     iv = sort(i(nl+1:end));                         % optimisation steps: see QV comment below
     j = 0;
-    for gamma = logspace(-4,3,30)
+    % Loop of lambda and gamma
+    for gamma = logspace(-4,3,30)                   % If gamma is too small, 
         QL = exp(-gamma * PD(il, il));              % precomputable (if gamma is in the external cycle)
         QV = exp(-gamma * PD(iv, il));              % in these two lines I'm accessing rows and columns of a matrix, where indexes are scrumbled. We can improve the access by sorting il and iv
         % If a matrix is sparse there's a waste of space. In matlab I can
@@ -73,8 +80,12 @@ for gamma = logspace(-4,3,30)
       end
    end
 end
-
+% Complexity in this part is very important and should be calculated for 
+% each value of lambda.
 Q = exp(-gamma_best * pdist2(X,X));
 alpha = (Q + lambda_best * eye(n,n)) \ Y;
 YP = exp(-gamma_best * pdist2(XT,X)) * alpha;
 plot(XT,YP,'r');
+% The 'belly' of the gaussians used to estimate points depends from gamma
+% value. If gamma was equal to infinity, we'd get deltas (dirac) that
+% represent points, and so the gaussian would be as thinner as possible.

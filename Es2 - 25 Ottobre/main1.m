@@ -3,11 +3,14 @@ close all
 clc
 
 %% Regression in multi-dimension problems
-
+% The following example is mono variable to be able of drawing graphs.
 m = 1000;
 n = 100;                                 % samples
 d = 1;                                   % dimension of the problem
-sigma = .05;
+sigma = .05;                             % variance of the noise
+
+%If we have large noise value, then we need more samples and taking the
+%average value we are able to find the original signal.
 
 XT = linspace(-2*pi, 2*pi, m)';
 YT = sinc(XT);
@@ -18,6 +21,9 @@ Y = sinc(X) + sigma * randn(n,1);
 figure, box on, hold on, grid on
 plot(XT,YT,'g');
 plot(X,Y,'ob');
+
+% NOTE: for cycles and if statements are deprecated in matlab language,
+% because they get the code slower.
 
 %% Kernel method
 % min_w || X w - y ||^2 + lambda ||w||^2
