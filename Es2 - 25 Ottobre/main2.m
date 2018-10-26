@@ -9,11 +9,12 @@ clc
 
 m = 1000;
 n = 100;                                 % Number of samples. As I increase 
-                                         % it, as the model follows reality
+                                         % it, as the model follows the reality
 d = 1;                                   % dimension of the problem
 sigma = .05;                             % Variance of the noise.
-% If variance value is high, then we need more samples, taking average
-% value.
+% If variance value is high, we need more samples, then we take the average
+% value. Even if we have a lot of noise, we are always able to get the
+% original value of the function.
 
 XT = linspace(-2*pi, 2*pi, m)';
 YT = sinc(XT);

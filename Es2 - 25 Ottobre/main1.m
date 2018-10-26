@@ -3,14 +3,14 @@ close all
 clc
 
 %% Regression in multi-dimension problems
-% The following example is mono variable to be able of drawing graphs.
+% The following example is mono variable to be able to draw graphs.
 m = 1000;
-n = 100;                                 % samples
+n = 100;                                 % number of samples
 d = 1;                                   % dimension of the problem
 sigma = .05;                             % variance of the noise
 
-%If we have large noise value, then we need more samples and taking the
-%average value we are able to find the original signal.
+%If we have large noise value, we need more samples and then we take the
+%average value to be able to find the original signal.
 
 XT = linspace(-2*pi, 2*pi, m)';
 YT = sinc(XT);
