@@ -19,8 +19,8 @@ warning('off', MSGID);
 for n = [3,6,10,15,30]
     X = rand(n,1);
     Y = X.^2 + sigma * randn(n,1); % randn -> generates a random number with gaussian distribution
-    AL = []; %AL stands for ALearning
-    AT = []; %AT stands for ATest
+    AL = []; %AL stands for ALear
+    AT = [];
     i2 = 0;
     for p = 0:5
         AL = [AL, X.^p];

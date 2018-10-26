@@ -38,10 +38,7 @@ for k = 3000
 end
 error = error / 3000;
 % In the previous line, if we increase the denominator, we note that the
-% system behaves differently. If we increase 'p' parameter, we note that
-% the variance value increases too. If we use a higher degree regressor,
-% the system depends more on the value of the original random variable,
-% because of the number of data.
+% system behaves differently.
 
 for i = 1:size(error,1)
    for j = 1:size(error,2)
