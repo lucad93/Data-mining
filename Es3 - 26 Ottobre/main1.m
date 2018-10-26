@@ -7,9 +7,10 @@ D = load('wine_red.csv');
  
 %%
 for i = 1:size(D,2)
+    % Finding maximum and minimum values from data
     mi = min(D(:,i));
     ma = max(D(:,i));
-    di = ma - mi;
+    di = ma - mi; % Difference between maximum and minimum
     if (di > 1e-6)
         % D(:,i) = (D(:,i)-mean(D(:,i)))/std(D(:,i)); % 0 mean, 1 std
         % D(:,i) = (D(:,i)-mi)/di; % [0,1]
@@ -18,6 +19,7 @@ for i = 1:size(D,2)
         D(:,i) = 0;
     end
 end
+% Now we'll clean some variables from workspace
 clear i mi ma di
  
 %%
@@ -31,7 +33,7 @@ clear D
 % hist(Y,20)
  
 %%
-n = size(X,1);
+n = size(X,1);          % Dimension of data-set
 nl = round(.6*n);
 nv = round(.2*n);
 PD = pdist2(X,X);
