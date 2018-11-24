@@ -8,6 +8,14 @@ d = 2;
 X = [randn(n/2, d) + 2; randn(n/2, d) - 2];
 Y = [ones(n/2, 1); -ones(n/2, 1)];
 
+%Normalization
+for i = 1:d
+   mi = min(X(:,i));
+   ma = max(X(:,i));
+   diff = ma - mi;
+   X(:,i) = 2 * (X(:,i) - mi) / diff - 1;
+end
+
 figure, hold on, box on, grid on
 plot(X(Y<0, 1), X(Y<0, 2), 'ob');
 plot(X(Y>0, 1), X(Y>0, 2), 'or');
@@ -25,14 +33,6 @@ w = X' * diag(Y) * alpha;
 % The bias is computed only for alpha in (0, C)
 i = find(alpha > 0+1e-5 | alpha < C-(+1e-5)); i = i(1);
 b = Y(i) - w' * X(i, :)';
-
-%Normalization
-for i = 1:d
-   mi = min(X(:,i));
-   ma = max(X(:,i));
-   diff = ma - mi;
-   X(:,i) = 2 * (X(:,i) - mi) / diff - 1;
-end
 
 %% Classification phase
 ns = 10000;
