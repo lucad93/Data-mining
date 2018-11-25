@@ -15,7 +15,7 @@ function T = DT_learn(X,Y,depth)
           [vX, i] = sort(X(:,i1), 'ascend');     % v is the sorted vector, i tells which was the position in the original vector
           vY = Y(i);
           for i2 = 1:n-1
-             if (vY(i1) ~= vY(i2+1)) 
+             if (vY(i2) ~= vY(i2+1)) 
                  err = mean([vY(1:i2)~=mode(vY(1:i2)); ...
                              vY(i2+1:end)~=mode(vY(i2+1:end))]);
                  if (err_best > err)
