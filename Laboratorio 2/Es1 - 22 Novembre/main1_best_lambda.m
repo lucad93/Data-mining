@@ -5,7 +5,7 @@ clc
 %% Multi-Class classification
 nc = 80;                                % number of samples per class
 c = 4;                                  % number of classes
-r = 5;                                  % radius
+r = 4;                                  % radius
 X = [];
 Y = [];
 
@@ -25,7 +25,7 @@ for i = 1:d
    X(:,i) = 2 * (X(:,i) - mi) / diff - 1;
 end
 
-%% Implementation of all vs all learning phase
+%% Implementation of all vs all
 nl = round(.7 * n);                     % learning set dimension = 70% of total data
 nv = n - nl;                            % validation set dimension = the remaining data
 
@@ -42,9 +42,11 @@ for k = 1:30
     XV = X(iv,:);
     YV = Y(iv);
     
-    for lambda = logspace(-4,3,30)          % regularization term
+    for lambda = logspace(-4,3,30)      % regularization term
         W = [];
-        % All the classes must compete against all the others, so two nested loops
+        j = j + 1;
+        
+        % Learning phase: all the classes must compete against all the others, so two nested loops
         for i1 = 1:c
            for i2 = i1+1:c
                cp = YL == i1;                % class plus
@@ -62,28 +64,63 @@ for k = 1:30
            for i2 = i1+1:c
               i3 = i3 + 1;
               YS(:, i3) = XV * W(:, i3);
-              % I go back to the original class (1,..,7)
+              % I go back to the original class
               YS(:, i3) = (YS(:, i3) >= 0)*i1 + (YS(:, i3) < 0)*i2;
            end
         end
         YS = mode(YS, 2);                       % i take the most frequent results, row-wise
+        err(j) = err(j) + sum(YS ~= YV)/30;     % err(j) = average (on k) of classification errors
     end
 end
 
-% Plotting the learning set
+% I find the best lambda
+j = 0;
+err_best = Inf;
+for lambda = logspace(-4,3,30)
+   j = j + 1;
+   if (err(j) < err_best)
+      err_best = err(j);
+      lambda_best = lambda;
+   end
+end
+
+% I re-compute the model W using the best lambda and all data
+W = [];
+j = j + 1;
+for i1 = 1:c
+   for i2 = i1+1:c
+       cp = Y == i1;
+       cm = Y == i2;
+       all = cp | cm;
+       Ytmp = cp*1 + cm*(-1);           
+       W = [W, (X(all,:)'*X(all,:) + lambda_best*eye(d))\(X(all,:)'*Ytmp(all))];
+   end
+end
+
+% Plotting the data set
 colors = 'bygkcmr';
 figure, box on, grid on, hold on
 for i = 1:c
-   plot(XL(YL==i,1), XL(YL==i,2), ['o', colors(i)]); 
+   plot(X(Y==i,1), X(Y==i,2), ['o', colors(i)]); 
 end
 
+% Using the model W with the best lambda to plot a lot of points
+% to see the lines
+ns = 10000;
+XS = 2 * rand(ns, d) - 1;
+YS = zeros(ns, c * (c-1) / 2);
+i3 = 0;
+for i1 = 1:c
+   for i2 = i1+1:c
+      i3 = i3 + 1;
+      YS(:, i3) = XS * W(:, i3);
+      YS(:, i3) = (YS(:, i3) >= 0)*i1 + (YS(:, i3) < 0)*i2;
+   end
+end
+YS = mode(YS, 2);
+for i = 1:c
+   plot(XS(YS==i,1), XS(YS==i,2), ['.', colors(i)], 'MarkerSize', 1); 
+end
 
-
-
-
-
-
-
-
-
-
+% Print the best lambda and the best error on the figure
+title(sprintf("Best error: %e, Best lambda: %e", err_best, lambda_best));
