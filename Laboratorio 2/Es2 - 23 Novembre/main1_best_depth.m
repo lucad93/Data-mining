@@ -3,15 +3,10 @@ close all
 clc
  
 %% Decision Trees
-nc = 30;
 c = 2;
-r = 5;
-X = [];
-Y = [];
 dataset = readtable('Iris.csv', 'Delimiter', ',', 'ReadVariableNames', true);
 labels = table2array(dataset(:,6));
 data = table2array(dataset(:,2:5));
-% classesS = strings(150,1);
 classes = zeros(150,1);
 for i=1:150
     if labels(i) == "Iris-setosa"
@@ -21,21 +16,11 @@ for i=1:150
     end
 end
 
-
-% for i = 1:c
-%     theta = i*(2*pi/c);
-%     X = [X; randn(nc,1)+r*cos(theta), randn(nc,1)+r*sin(theta)]; %#ok<AGROW>
-%     Y = [Y; i*ones(nc,1)]; %#ok<AGROW>
-% end
 X = [data(:,1) data(:,3:4)];
 Y = classes;
-
 [n, d] = size(X);
-nl = round(.7*n);                                   % learning set (70% of data)
-i = randperm(n);
-il = sort(i(1:nl));                             % sort function to get the result less disordered
-iv = sort(i(nl+1:end));                         % optimisation steps: see QV comment below 
-%%
+
+% Normalization
 for i = 1:d
     mi = min(X(:,i));
     ma = max(X(:,i));
@@ -43,27 +28,62 @@ for i = 1:d
     X(:,i) = 2*(X(:,i)-mi)/di-1;
 end
 
-%%
-colors = 'rbcmkyg';
+%% Learning and validation
+nl = round(.7*n);
+nv = n - nl;
+
+err = zeros(10, 1);
+for k = 1:30
+    i = randperm(n);
+    il = sort(i(1:nl));
+    iv = sort(i(nl+1:end));
+    j = 0;
+    
+    XL = X(il,:);
+    YL = Y(il);
+    XV = X(iv,:);
+    YV = Y(iv);
+    
+    for depth = 1:10
+        j = j + 1;
+        % Learning phase: I create the tree
+        T = DT_learn(XL,YL,depth);
+        
+        % Classification phase
+        YS = DT_forw(T,XV);
+        err(j) = err(j) + sum(YS ~= YV)/30;
+    end
+end
+
+% I find the best depth
+j = 0;
+err_best = Inf;
+for depth = 1:10
+   j = j + 1;
+   if (err(j) < err_best)
+      err_best = err(j);
+      depth_best = depth;
+   end
+end
+
+% I re-compute the tree T using the best depth and all data
+T = DT_learn(X,Y,depth_best);
+
+% Plotting the dataset
+colors = 'bygkcmr';
 figure, box on, grid on, hold on
 for i = -1:2:c
     plot3(X(Y==i,1),X(Y==i,2),X(Y==i,3),['o',colors(i+2)]);
 end
- 
- 
-%%
-for depth = 1:7
-    T = DT_learn(X,Y,depth);
-end
 
-
- 
-%%
+% I use the model T with the best depth to plot a lot of points
+% to see the lines
 ns = 10000;
-XS = 2*rand(ns,d)-1;
+XS = 2 * rand(ns, d) - 1;
 YS = DT_forw(T,XS);
- 
-%%
 for i = -1:2:c 
     plot3(XS(YS==i,1),XS(YS==i,2),XS(YS==i,3),['.',colors(i+2)],'MarkerSize',1)
 end
+
+% Print the best depth and the best error on the figure
+title(sprintf("Best error: %e, Best depth: %d", err_best, depth_best));
