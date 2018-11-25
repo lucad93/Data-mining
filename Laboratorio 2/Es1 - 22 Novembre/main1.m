@@ -26,7 +26,7 @@ for i = 1:d
 end
 
 % Plotting
-colors = 'rbcmbyg';
+colors = 'rbcmkyg';
 figure, box on, grid on, hold on
 for i = 1:c
    plot(X(Y==i,1), X(Y==i,2), ['o', colors(i)]); 
