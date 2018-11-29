@@ -90,4 +90,4 @@ plot(X(alpha==C,1),X(alpha==C,2),'sy','MarkerSize',10)
 dualcost = -(.5*alpha'*Q*alpha-ones(n,1)'*alpha);
 primalcost = .5*w'*w+C*sum(max(0,1-diag(Y)*(X*w+b))); 
 dualitygap = abs(dualcost-primalcost);
-title(sprintf('DG: %e   C_{best}: %e   err_{best}: %e',dualitygap,C_best,err_best))
+title(sprintf('DG: %e   Best error: %e   Best C: %e',dualitygap,err_best,C_best));
