@@ -6,28 +6,28 @@ clc
 
 %% Data loading and normalization
 % load dataset
-dataset = 'face';
+dataset = 'iris';
 filenameX = strcat('NN_Datasets/',dataset,'_x.txt');
 filenameY = strcat('NN_Datasets/',dataset,'_y.txt');
 X = load(filenameX);
 Y = load(filenameY);
 % normalization of X between 0 and 1 (for iris dataset)
-% for i = 1:size(X,2)
-%    % for each feature I compute the max and min value; then I find the line s.t.
-%    % the normalization is 0 when value = min and 1 when value = max. I use
-%    % this line to normalize the dataset
-%    mi = min(X(:,i));                            % min value
-%    ma = max(X(:,i));                            % max value
-%    m = 1 / (ma - mi);                           % angular coeff
-%    q = -m * mi;                                 % constant term
-%    X(:,i) = m * X(:,i) + q;                     % normalization of a feature
-% end
+for i = 1:size(X,2)
+   % for each feature I compute the max and min value; then I find the line s.t.
+   % the normalization is 0 when value = min and 1 when value = max. I use
+   % this line to normalize the dataset
+   mi = min(X(:,i));                            % min value
+   ma = max(X(:,i));                            % max value
+   m = 1 / (ma - mi);                           % angular coeff
+   q = -m * mi;                                 % constant term
+   X(:,i) = m * X(:,i) + q;                     % normalization of a feature
+end
 % reduction of the iris classification problem to a binary classification problem
 % classes 2 and 3 are considered together as a new class -1
-% Y(Y > 1) = -1;
+Y(Y > 1) = -1;
 % sampling of the dataset to create learning and valdation set
 n = size(X, 1);                                 % number of samples
-percentage = .5;
+percentage = 1;
 nl = round(percentage * n);                     % dimension of learning set wrt n
 indx = randperm(n);
 il = sort(indx(1:nl));
@@ -70,19 +70,14 @@ end
 fV = (w' * XV')' + b;
 errV = sum(YV .* fV <= 0)
 
-%% Plot the 'or' dataset and its linear separator
-% figure, hold on, grid on
-% separator = [-b/w(1), -b/w(2)];
-% plot(XL(:,1),XL(:,2), 'ob');                    % dataset points     
-% plot([0,separator(2)],[separator(1),0],'b');    % separator line
-% xlim([0 1]); ylim([0 1]);                       % axes are limited between 0 and 1
-
-%% Plot the 'iris' dataset and its linear separator
-% figure, hold on, grid on
-% separator = [-b/w(1), -b/w(2)];
-% plot(XL(:,1),XL(:,2), 'ob');     
-% plot([0,separator(2)],[separator(1),0],'b');
-% xlim([0 1]); ylim([0 1]);
+%% Plot the 'or' and the 'iris' dataset and their linear separator
+figure, hold on, grid on
+separator = [-b/w(1), -b/w(2)];
+% dataset points: class 1 is blue, class -1 is red
+plot(XL(YL == 1, 1), XL(YL == 1, 2), 'ob');
+plot(XL(YL == -1, 1), XL(YL == -1, 2), 'or');
+plot([0,separator(2)],[separator(1),0],'b');    % separator line
+xlim([0 1]); ylim([0 1]);                       % axes are limited between 0 and 1
 
 %% Plot a face
 % figure
