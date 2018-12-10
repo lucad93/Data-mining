@@ -27,7 +27,7 @@ Y = load(filenameY);
 % Y(Y > 1) = -1;
 % sampling of the dataset to create learning and valdation set
 n = size(X, 1);                                 % number of samples
-percentage = 1;
+percentage = .5;
 nl = round(percentage * n);                     % dimension of learning set wrt n
 indx = randperm(n);
 il = sort(indx(1:nl));
@@ -89,4 +89,4 @@ clear X
 
 %% Plot w (for faces)
 figure
-imshow(abs(mat2gray(reshape(w', [60,60])')));
+imshow(mat2gray(abs(reshape(w', [60,60])')));
