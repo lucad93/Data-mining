@@ -3,15 +3,20 @@ close all
 clc
 
 %% Gender Recognition
+% Every dataset has particular parts in the code that must be decommented
 
-%% Data loading and normalization
-% load dataset
-dataset = 'face';
+%% Load the dataset
+dataset = 'sonar';
 filenameX = strcat('NN_Datasets/',dataset,'_x.txt');
 filenameY = strcat('NN_Datasets/',dataset,'_y.txt');
 X = load(filenameX);
 Y = load(filenameY);
-% normalization of X between 0 and 1 (for iris dataset)
+
+%% Dislay of the dataset (for 'or', 'xor' and 'iris' datasets)
+% figure, hold on, grid on
+% plot(X(:, 1), X(:, 2), 'ok');
+
+%% Normalization of X between 0 and 1 (for 'iris' dataset)
 % for i = 1:size(X,2)
 %    % for each feature I compute the max and min value; then I find the line s.t.
 %    % the normalization is 0 when value = min and 1 when value = max. I use
@@ -25,10 +30,11 @@ Y = load(filenameY);
 % % reduction of the iris classification problem to a binary classification problem
 % % classes 2 and 3 are considered together as a new class -1
 % Y(Y > 1) = -1;
-% sampling of the dataset to create learning and valdation set
+
+%% Sampling of the dataset to create learning and valdation set
 n = size(X, 1);                                 % number of samples
-percentage = .5;
-nl = round(percentage * n);                     % dimension of learning set wrt n
+percentage = 1;                                 % dimension of learning set as percentage of the whole dataset
+nl = round(percentage * n);                     % dimension of learning set
 indx = randperm(n);
 il = sort(indx(1:nl));
 iv = sort(indx(nl+1:end));
@@ -66,9 +72,9 @@ while err > 0
     it = it + 1;
 end
 
-%% Validation step
-fV = (w' * XV')' + b;
-errV = sum(YV .* fV <= 0)
+%% Validation step (for 'face' and 'sonar' datasets)
+% fV = (w' * XV')' + b;
+% errV = sum(YV .* fV <= 0)
 
 %% Plot the 'or' and the 'iris' dataset and their linear separator
 % figure, hold on, grid on
@@ -80,13 +86,13 @@ errV = sum(YV .* fV <= 0)
 % xlim([0 1]); ylim([0 1]);                       % axes are limited between 0 and 1
 
 %% Plot a face
-figure
-subplot(1,2,1);
-imshow(abs(mat2gray(reshape(X(1,:), [60,60])'))); title('Male');
-subplot(1,2,2);
-imshow(abs(mat2gray(reshape(X(2,:), [60,60])'))); title('Female');
-clear X
+% figure
+% subplot(1,2,1);
+% imshow(abs(mat2gray(reshape(X(1,:), [60,60])'))); title('Male');
+% subplot(1,2,2);
+% imshow(abs(mat2gray(reshape(X(2,:), [60,60])'))); title('Female');
+% clear X
 
 %% Plot w (for faces)
-figure
-imshow(mat2gray(abs(reshape(w', [60,60])')));
+% figure
+% imshow(mat2gray(abs(reshape(w', [60,60])')));
