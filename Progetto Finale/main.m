@@ -10,11 +10,10 @@ dataset = rmfield(dataset, 'textdata'); % 'textdata' and 'colheaders' have the s
 dataset.data = dataset.data(:,2:end);
 dataset.colheaders = dataset.colheaders(:,2:end);
 
-%% Data visualization
-% Histogram with the distribution of chances of admission
+%% Histogram with the distribution of chances of admission
 figure
 histogram(dataset.data(:,end), 10); title('Chance of Admit distribution'); % 10 buckets
-% Correlation matrix between columns
+%% Correlation matrix between columns
 figure
 R = corrcoef(dataset.data); % computation of correlation coefficients between features
 h = heatmap(dataset.colheaders, dataset.colheaders, R); % heatmap of correlation coefficients
@@ -22,13 +21,13 @@ h.Title = 'Correlation matrix';
     % We can see that Chance of Admit is strongly related to GRE Score, TOEFL
     % Score and CGPA. On the other hand, Chance of Admit is poorly related to
     % Research.
-% Scatter plot between CGPA and Chance of Admit (the strongest relation in the matrix)
+%% Scatter plot between CGPA and Chance of Admit (the strongest relation in the matrix)
 figure
 plot(dataset.data(:,6), dataset.data(:,end), 'o', 'MarkerFaceColor', 'b');
 title('CGPA-Chance of Admit'); xlabel('CGPA'); ylabel('Chance of Admit');
     % As noted before, there is a strong relation between them, since if
     % one increases also the other increases
-% Scatter plot between CGPA and Chance of Admit (the strongest relation in
+%% Scatter plot between CGPA and Chance of Admit (the strongest relation in
 % the matrix), but filtered for Research value (0 and 1)
 figure, hold on
 plot(dataset.data(dataset.data(:, 7) == 1, 6), dataset.data(dataset.data(:, 7) == 1, end), 'o', 'MarkerFaceColor', 'b'); % Research = 1
@@ -36,3 +35,19 @@ plot(dataset.data(dataset.data(:, 7) == 0, 6), dataset.data(dataset.data(:, 7) =
 title('CGPA-Chance of Admit'); xlabel('CGPA'); ylabel('Chance of Admit');
     % We notice that almost all candidates with higher chances of admission
     % have partecipated in research work
+    
+%% Learning
+% Application of the algorithm and visualization of the prediction function
+[XT,YP,best_error,best_lambda,best_gamma] = KRLS(dataset.data(:,1:7),dataset.data(:,8),.7);
+figure, hold on
+plot(dataset.data(dataset.data(:, 7) == 1, 6), dataset.data(dataset.data(:, 7) == 1, end), 'o', 'MarkerFaceColor', 'b'); % Research = 1
+plot(dataset.data(dataset.data(:, 7) == 0, 6), dataset.data(dataset.data(:, 7) == 0, end), 'o', 'MarkerFaceColor', 'r'); % Research = 0
+plot(XT(:,6), YP, '-g', 'LineWidth', 3);
+title('Chance of Admit prediction'); xlabel('CGPA'); ylabel('Chance of Admit prediction');
+% Prediction on the whole dataset to compute the total mean error
+n = size(dataset.data, 1);
+PD = pdist2(dataset.data(:,1:7),dataset.data(:,1:7));
+Q = exp(-best_gamma * PD);
+alpha = (Q + best_lambda * eye(n,n)) \ dataset.data(:,8);
+YP = exp(-best_gamma * PD) * alpha;
+err = sum((dataset.data(:,8) - YP) .^ 2) / n
