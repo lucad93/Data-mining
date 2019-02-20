@@ -10,6 +10,13 @@ dataset = rmfield(dataset, 'textdata'); % 'textdata' and 'colheaders' have the s
 dataset.data = dataset.data(:,2:end);
 dataset.colheaders = dataset.colheaders(:,2:end);
 
+%% Data normalization
+% for d = 1:size(dataset.data, 2)-1
+%     mi = min(dataset.data(:,d));
+%     ma = max(dataset.data(:,d));
+%     dataset.data(:,d) = 1/(ma-mi) * (dataset.data(:,d) - mi);
+% end
+
 %% Histogram with the distribution of chances of admission
 figure
 histogram(dataset.data(:,end), 10); title('Chance of Admit distribution'); % 10 buckets

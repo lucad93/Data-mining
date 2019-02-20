@@ -50,7 +50,7 @@ function [XT,YP,best_error,best_lambda,best_gamma] = KRLS(X,Y,lset_dim)
         XT(:,k) = linspace(min(X(:,k)), max(X(:,k)), m);
     end
     
-    % Computation of the prediction on the whole dataset, using the best parameters
+    % Computation of the prediction on XT, using the best parameters
     Q = exp(-best_gamma * PD);
     alpha = (Q + best_lambda * eye(n,n)) \ Y;
     YP = exp(-best_gamma * pdist2(XT,X)) * alpha;
