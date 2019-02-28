@@ -22,7 +22,7 @@ function [XT,YP,best_error,best_lambda,best_gamma] = KRLS(X,Y,lset_dim)
             QT = exp(-gamma * PD(it, il));
             for lambda = logspace(-4,3,30)
                 j = j + 1;
-                alpha = (QL + lambda * eye(nl,nl))\Y(il);              
+                alpha = (QL + lambda * eye(nl,nl))\Y(il); % array of weights associated to the category             
                 YP = QT * alpha; % prediction attempt using the current model
                 err(j) = err(j) + mean(abs(YP-Y(it))) / 30; % computation of the average error of 30 iterations
             end
