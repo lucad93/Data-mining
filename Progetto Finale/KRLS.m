@@ -5,7 +5,7 @@ function [XT,YP,best_error,best_lambda,best_gamma] = KRLS(X,Y,lset_dim)
     n = size(X,1); % number of total samples
     d = size(X,2); % number of features
     nl = round(lset_dim * n); % number of learning set samples
-    PD = pdist2(X,X); % pair-wise distance
+    PD = pdist2(X,X); % pair-wise distance: euclidean distance between samples
     err = zeros(30*30,1); % array of errors, for every possible value of lambda and gamma
     
     % Learning phase
