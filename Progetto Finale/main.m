@@ -51,10 +51,3 @@ plot(dataset.data(dataset.data(:, 7) == 1, 6), dataset.data(dataset.data(:, 7) =
 plot(dataset.data(dataset.data(:, 7) == 0, 6), dataset.data(dataset.data(:, 7) == 0, end), 'o', 'MarkerFaceColor', 'r'); % Research = 0
 plot(XT(:,6), YP, '-g', 'LineWidth', 3);
 title('Chance of Admit prediction'); xlabel('CGPA'); ylabel('Chance of Admit prediction');
-% Prediction on the whole dataset to compute the total mean error
-% n = size(dataset.data, 1);
-% PD = pdist2(dataset.data(:,1:7),dataset.data(:,1:7));
-% Q = exp(-best_gamma * PD);
-% alpha = (Q + best_lambda * eye(n,n)) \ dataset.data(:,8);
-% YP = exp(-best_gamma * PD) * alpha;
-% err = sum((dataset.data(:,8) - YP) .^ 2) / n
